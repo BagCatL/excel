@@ -606,11 +606,28 @@ class Parser {
     String? type = node.getAttribute('t');
 
     switch (type) {
-      // sharedString
+       //sharedString
+      // case 's':
+      //   final sharedString = _excel._sharedStrings
+      //       .value(int.parse(_parseValue(node.findElements('v').first)));
+      //   value = TextCellValue.span(sharedString!.textSpan);
+      //   break;
       case 's':
-        final sharedString = _excel._sharedStrings
-            .value(int.parse(_parseValue(node.findElements('v').first)));
-        value = TextCellValue.span(sharedString!.textSpan);
+        final vElements = node.findElements('v');
+        if (vElements.isEmpty) {
+          value = TextCellValue('');
+          break;
+        }
+
+        final vStr = _parseValue(vElements.first);
+        final index = int.tryParse(vStr);
+        final sharedString = (_excel._sharedStrings != null && index != null)
+            ? _excel._sharedStrings.value(index)
+            : null;
+
+        value = sharedString != null
+            ? TextCellValue.span(sharedString.textSpan)
+            : TextCellValue('');
         break;
       // boolean
       case 'b':
